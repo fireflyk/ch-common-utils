@@ -1,0 +1,1 @@
+mvn install:install-file -DgroupId=net.sourceforge -DartifactId=pinyin4j -Dversion=2.5.0 -Dfile=E:\WorkSpace_OSGi\LiuTongUtils\lib\pinyin4j-2.5.0.jar -Dpackaging=jar -DgeneratePom=true
