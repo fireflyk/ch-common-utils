@@ -1,5 +1,6 @@
 package com.codinghero.util;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,37 @@ public final class BeanUtils {
 		try {
 			return newInstance(Class.forName(className));
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * create an instance, and set null to all non-primitive fields
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T newEmptyInstance(Class<T> clazz){
+		try {
+			T t = newInstance(clazz);
+			PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(clazz);
+			if (pds != null) {
+				for (PropertyDescriptor pd : pds) {
+					if (pd.getWriteMethod() != null
+							& !pd.getPropertyType().isPrimitive()) {
+						PropertyUtils.setProperty(t, pd.getName(), null);
+					}
+				}
+			}
+			return t;
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return null;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return null;
+		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			return null;
 		}
