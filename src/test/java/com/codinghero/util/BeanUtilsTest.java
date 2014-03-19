@@ -32,6 +32,13 @@ public class BeanUtilsTest {
 		Role role = new Role();
 		role.setName("roleName");
 		origUser.setRole(role);
+		origUser.setFriendIds(new Integer[] { 1, 3, 5 });
+		
+		User friend = new User();
+		friend.setName("friend1");
+		Map<Integer, User> friends = new HashMap<Integer, User>();
+		friends.put(1, friend);
+		origUser.setFriends(friends);
 
 		userMap = new HashMap<String, Object>();
 		userMap.put("name", "userName");
@@ -89,6 +96,17 @@ public class BeanUtilsTest {
 		Role role = (Role) map.get("role");
 		assertEquals("userName", map.get("name"));
 		assertEquals("roleName", role.getName());
+	}
+	
+	@Test
+	public void testGetIndexedProperty() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Assert.assertEquals("3", org.apache.commons.beanutils.BeanUtils.getIndexedProperty(origUser, "friendIds[1]"));
+	}
+	
+	@Test
+	public void testGetMappedProperty() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		String friend = org.apache.commons.beanutils.BeanUtils.getMappedProperty(origUser, "friends(1)");
+		Assert.assertEquals(3, org.apache.commons.beanutils.BeanUtils.getMappedProperty(origUser, "friends(1)"));
 	}
 
 	//@Test
