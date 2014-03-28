@@ -158,7 +158,7 @@ public final class BeanUtils {
 	 * @param dest
 	 * @param orig
 	 */
-	public static void copyProperties(Object dest, Object orig){
+	public static void copyProperties(Object orig, Object dest){
 		try {
 			if (orig != null)
 				PropertyUtils.copyProperties(dest, orig);
@@ -180,62 +180,8 @@ public final class BeanUtils {
 	 */
 	public static <T> T copyProperties(Object orig, Class<T> destClazz) {
 		T dest = newInstance(destClazz);
-		copyProperties(dest, orig);
+		copyProperties(orig, dest);
 		return dest;
-	}
-
-	/**
-	 * copy a field of an object 
-	 * 
-	 * @param dest
-	 * @param orig
-	 * @param getField
-	 * @param setField
-	 */
-	public static void copyProperties(Object dest, Object orig, String getField, String setField){
-		try {
-			if (orig != null) {
-				Object origValue = PropertyUtils.getSimpleProperty(orig, getField);
-				PropertyUtils.setSimpleProperty(dest, setField, origValue);
-			}
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * copy a field of an object & return a new object
-	 * 
-	 * @param orig
-	 * @param destClazz
-	 * @param getField
-	 * @param setField
-	 * @return
-	 */
-	public static <T> T copyProperties(Object orig, Class<T> destClazz, String getField, String setField) {
-		T dest = newInstance(destClazz);
-		copyProperties(dest, orig, getField, setField);
-		return dest;
-	}
-	
-	/**
-	 * copy map to object
-	 * 
-	 * @param dest
-	 * @param orig
-	 */
-	public static void copyProperties(Object dest, Map<?, ?> orig){
-		try {
-			org.apache.commons.beanutils.BeanUtils.populate(dest, orig);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -247,8 +193,24 @@ public final class BeanUtils {
 	 */
 	public static <T> T copyProperties(Map<?, ?> orig, Class<T> destClazz){
 		T dest = newInstance(destClazz);
-		copyProperties(dest, orig);
+		copyProperties(orig, dest);
 		return dest;
+	}
+	
+	/**
+	 * copy map to object
+	 * 
+	 * @param dest
+	 * @param orig
+	 */
+	public static void copyProperties(Map<?, ?> orig, Object dest){
+		try {
+			org.apache.commons.beanutils.BeanUtils.populate(dest, orig);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -271,30 +233,29 @@ public final class BeanUtils {
 			return null;
 		}
 	}
-
-	/**
-	 * 
-	 * 
-	 * @param field1
-	 * @param orig1
-	 * @param field2
-	 * @param orig2
-	 * @param destClazz
-	 * @return
-	 */
-	public static <T> T copyProperties(String field1, Object orig1, String field2, Object orig2, Class<T> destClazz) {
-		T dest = newInstance(destClazz);
+	
+	public static void copyNotNullToNull(Object orig, Object dest) {
 		try {
-			PropertyUtils.setSimpleProperty(dest, field1, orig1);
-			PropertyUtils.setSimpleProperty(dest, field2, orig2);
+			if (orig != null) {
+				new CopyNotNullToNull().copyProperties(dest, orig);
+			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
+		}
+	}
+
+	public static void copyNotNullToDest(Object orig, Object dest) {
+		try {
+			if (orig != null) {
+				new CopyNotNullToDest().copyProperties(dest, orig);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		return dest;
 	}
 
 	public static <T1, T2> List<T2> copyList(List<T1> origList, Class<T2> destClazz) {
@@ -315,46 +276,5 @@ public final class BeanUtils {
 			resultList.add(t);
 		}
 		return resultList;
-	}
-
-	public static <T1, T2> List<T2> copyList(List<T1> origList, Class<T2> destClazz, String getField, String setField) {
-		if (origList == null)
-			return null;
-		List<T2> resultList = new ArrayList<T2>();
-		for (T1 orig : origList) {
-			resultList.add(copyProperties(orig, destClazz, getField, setField));
-		}
-		return resultList;
-	}
-
-	public static <T1, T2> List<T2> copyList(String setField1, Object orig, String getField2, String setField2, List<T1> origList, Class<T2> destClazz) {
-		if (origList == null)
-			return null;
-		List<T2> resultList = new ArrayList<T2>();
-		for (T1 origElement : origList) {
-			try {
-				Object field2Value = PropertyUtils.getSimpleProperty(origElement, getField2);
-				resultList.add(copyProperties(setField1, orig, setField2, field2Value, destClazz));
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			}
-		}
-		return resultList;
-	}
-
-	/**
-	 * use <code>copyList(List&lt;T1&gt; list, Class&lt;T2&gt; destClazz)</code> replaced
-	 * 
-	 * @param dtoList
-	 * @param formClazz
-	 * @return
-	 */
-	@Deprecated
-	public static <T1, T2> List<T2> dtoToForm(List<T1> dtoList, Class<T2> formClazz) {
-		return copyList(dtoList, formClazz);
 	}
 }

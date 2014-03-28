@@ -21,10 +21,7 @@ public class AutoArrayList<E> implements List<E> {
 	public E get(int index) {
 		while (index >= arrayList.size())
 			arrayList.add(BeanUtils.newInstance(itemClazz));
-//		if (index < arrayList.size())
-			return arrayList.get(index);
-//		else
-//			return BeanUtils.newInstance(itemClazz);
+		return arrayList.get(index);
 	}
 	
 	//--- use arrayList method

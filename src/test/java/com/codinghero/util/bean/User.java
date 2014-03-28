@@ -8,7 +8,7 @@ public class User {
 	
 	private Integer[] friendIds;
 	
-	private Map<Integer, User> friends;
+	private Map<Integer, String> friends;
 
 	public String getName() {
 		return name;
@@ -34,11 +34,12 @@ public class User {
 		this.friendIds = friendIds;
 	}
 
-	public Map<Integer, User> getFriends() {
+	public Map<Integer, String> getFriends() {
 		return friends;
 	}
 
-	public void setFriends(Map<Integer, User> friends) {
+	public void setFriends(Map<Integer, String> friends) {
 		this.friends = friends;
 	}
+
 }
